@@ -1,0 +1,73 @@
+body {
+  background-color: transparent;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#tab-switcher-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+#tab-icons {
+  display: flex;
+  gap: 8px;
+  padding: 16px;
+  background-color: var(--vimium-foreground-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  align-items: center;
+}
+
+.tab-icon {
+  width: 32px;
+  height: 32px;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--vimium-background-color);
+  transition: border-color 0.1s ease;
+}
+
+.tab-icon img {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.tab-icon.active {
+  border-color: #4183c4;
+  box-shadow: 0 0 8px rgba(65, 131, 196, 0.6);
+}
+
+.tab-icon.placeholder {
+  background-color: transparent;
+  border: none;
+  width: 16px;
+}
+
+/* Fallback for when no favicon is available */
+.tab-icon .fallback-text {
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--vimium-foreground-text-color);
+}
+
+/* Indicators for more tabs */
+.tab-indicator {
+  width: 20px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--vimium-foreground-text-color);
+  opacity: 0.5;
+}
