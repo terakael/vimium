@@ -479,7 +479,28 @@ function selectTab(direction, { count, tab }) {
             return Math.max(0, tabs.length - count);
         }
       })();
-      chrome.tabs.update(tabs[toSelect].id, { active: true });
+
+      const newTab = tabs[toSelect];
+      chrome.tabs.update(newTab.id, { active: true });
+
+      // Send all tabs to the content script, which will determine how many to show based on window size.
+      const tabData = {
+        allTabs: tabs.map((t) => ({
+          url: t.url,
+          title: t.title,
+          index: t.index,
+        })),
+        activeTabIndex: toSelect,
+      };
+
+      // Send message to the new tab to show the tab switcher (only to top frame).
+      chrome.tabs.sendMessage(newTab.id, {
+        handler: "showTabSwitcher",
+        tabData,
+        silenceLogging: true,
+      }, { frameId: 0 }).catch(() => {
+        // Swallow errors if content script isn't loaded yet.
+      });
     }
   });
 }

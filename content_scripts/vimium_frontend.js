@@ -372,6 +372,11 @@ const messageHandlers = {
   showMessage(request) {
     HUD.show(request.message, 2000);
   },
+  showTabSwitcher(request) {
+    if (DomUtils.isTopFrame() && TabSwitcher) {
+      TabSwitcher.show(request.tabData);
+    }
+  },
 };
 
 async function handleMessage(request, sender) {
