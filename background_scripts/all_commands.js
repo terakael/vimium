@@ -230,6 +230,13 @@ const allCommands = [
   },
 
   {
+    name: "LinkHints.activateModeToFocusScrollable",
+    desc: "Focus a scrollable element",
+    group: "navigation",
+    advanced: true,
+  },
+
+  {
     name: "goPrevious",
     desc: "Follow the link labeled previous or <",
     group: "navigation",

@@ -145,6 +145,20 @@ const FOCUS_LINK = {
     link.focus();
   },
 };
+const FOCUS_SCROLLABLE = {
+  name: "scrollable",
+  indicator: "Focus scrollable element",
+  // This mode is only shown for scrollable elements (filtered in getHintDescriptors).
+  requireScrollable: true,
+  linkActivator(element) {
+    // Focus the scrollable element by simulating a DOMActivate event.
+    // This tells the scroller to make this the activated element.
+    handlerStack.bubbleEvent(Utils.isFirefox() ? "click" : "DOMActivate", {
+      target: element,
+    });
+    HUD.show("Focused scrollable region", 1000);
+  },
+};
 
 const availableModes = [
   OPEN_IN_CURRENT_TAB,
@@ -157,6 +171,7 @@ const availableModes = [
   COPY_LINK_TEXT,
   HOVER_LINK,
   FOCUS_LINK,
+  FOCUS_SCROLLABLE,
 ];
 
 const HintCoordinator = {
@@ -222,7 +237,10 @@ const HintCoordinator = {
   getHintDescriptors({ modeIndex, requestedByHelpDialog }, _sender) {
     if (!DomUtils.isReady() || DomUtils.windowIsTooSmall()) return [];
 
-    const requireHref = [COPY_LINK_URL, OPEN_INCOGNITO].includes(availableModes[modeIndex]);
+    const mode = availableModes[modeIndex];
+    const requireHref = [COPY_LINK_URL, OPEN_INCOGNITO].includes(mode);
+    const requireScrollable = mode.requireScrollable;
+
     // If link hints is launched within the help dialog, then we only offer hints from that frame.
     // This improves the usability of the help dialog on the options page (particularly for
     // selecting command names).
@@ -230,6 +248,10 @@ const HintCoordinator = {
       this.localHints = [];
     } else {
       this.localHints = LocalHints.getLocalHints(requireHref);
+      // Filter to show only scrollable elements if requireScrollable is true.
+      if (requireScrollable) {
+        this.localHints = this.localHints.filter((hint) => hint.reason === "Scroll.");
+      }
     }
     this.localHintDescriptors = this.localHints.map(({ linkText }, localIndex) => (
       new HintDescriptor({
@@ -353,6 +375,11 @@ const LinkHints = {
   },
   activateModeToDownloadLink(count) {
     this.activateMode(count, { mode: DOWNLOAD_LINK_URL });
+  },
+  activateModeToFocusScrollable(count) {
+    console.log("activateModeToFocusScrollable called with count:", count);
+    console.log("FOCUS_SCROLLABLE mode:", FOCUS_SCROLLABLE);
+    this.activateMode(count, { mode: FOCUS_SCROLLABLE });
   },
 };
 
@@ -1208,8 +1235,8 @@ const LocalHints = {
               "frameset")
           ? (reason = "Frame.")
           : undefined;
-        isClickable ||= (element === document.body) && windowIsFocused() &&
-            Scroller.isScrollableElement(element)
+        // Always show the body element when focused, allowing users to return focus to the main page.
+        isClickable ||= (element === document.body) && windowIsFocused()
           ? (reason = "Scroll.")
           : undefined;
         break;
@@ -1219,15 +1246,41 @@ const LocalHints = {
       case "div":
       case "ol":
       case "ul":
-        isClickable ||=
-          (element.clientHeight < element.scrollHeight) && Scroller.isScrollableElement(element)
-            ? (reason = "Scroll.")
-            : undefined;
+      case "section":
+      case "article":
+      case "aside":
+      case "main":
+      case "nav":
+      case "form":
+      case "fieldset":
+      case "pre":
+      case "code":
+      case "table":
+      case "tbody":
+      case "thead":
+        // Check if element has scrollable content (vertically or horizontally).
+        if (Scroller.isScrollableElement(element)) {
+          isClickable = true;
+          reason = "Scroll.";
+        }
         break;
       case "details":
         isClickable = true;
         reason = "Open.";
         break;
+    }
+
+    // Check if any element (not covered above) has CSS overflow properties and scrollable content.
+    if (!isClickable) {
+      const computedStyle = globalThis.getComputedStyle(element);
+      const overflowX = computedStyle.getPropertyValue("overflow-x");
+      const overflowY = computedStyle.getPropertyValue("overflow-y");
+      const hasScrollableOverflow = ["scroll", "auto"].includes(overflowX) ||
+        ["scroll", "auto"].includes(overflowY);
+      if (hasScrollableOverflow && Scroller.isScrollableElement(element)) {
+        isClickable = true;
+        reason = "Scroll.";
+      }
     }
 
     // NOTE(smblott) Disabled pending resolution of #2997.
