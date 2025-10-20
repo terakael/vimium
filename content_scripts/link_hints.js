@@ -1259,7 +1259,7 @@ const LocalHints = {
       case "tbody":
       case "thead":
         // Check if element has scrollable content (vertically or horizontally).
-        if (Scroller.isScrollableElement(element)) {
+        if (Scroller.isScrollableElement(element, "y") || Scroller.isScrollableElement(element, "x")) {
           isClickable = true;
           reason = "Scroll.";
         }
@@ -1275,9 +1275,10 @@ const LocalHints = {
       const computedStyle = globalThis.getComputedStyle(element);
       const overflowX = computedStyle.getPropertyValue("overflow-x");
       const overflowY = computedStyle.getPropertyValue("overflow-y");
-      const hasScrollableOverflow = ["scroll", "auto"].includes(overflowX) ||
-        ["scroll", "auto"].includes(overflowY);
-      if (hasScrollableOverflow && Scroller.isScrollableElement(element)) {
+      const hasScrollableOverflowY = ["scroll", "auto"].includes(overflowY);
+      const hasScrollableOverflowX = ["scroll", "auto"].includes(overflowX);
+      if ((hasScrollableOverflowY && Scroller.isScrollableElement(element, "y")) ||
+          (hasScrollableOverflowX && Scroller.isScrollableElement(element, "x"))) {
         isClickable = true;
         reason = "Scroll.";
       }
