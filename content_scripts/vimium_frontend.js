@@ -481,11 +481,35 @@ const HelpDialog = {
   },
 };
 
+// Initialize loading spinner
+function initLoadingSpinner() {
+  DomUtils.documentReady().then(() => {
+    // Create spinner element
+    const spinner = document.createElement("div");
+    spinner.id = "vimium-loading-spinner";
+    document.documentElement.appendChild(spinner);
+
+    // Show spinner when navigating away
+    globalThis.addEventListener("beforeunload", () => {
+      spinner.classList.add("visible");
+    });
+
+    // Hide spinner if page is restored from back-forward cache
+    globalThis.addEventListener("pageshow", (event) => {
+      if (event.persisted) {
+        // Page was restored from bfcache
+        spinner.classList.remove("visible");
+      }
+    });
+  });
+}
+
 const testEnv = globalThis.window == null;
 if (!testEnv) {
   initWindowIsFocused();
   initializePreDomReady();
   DomUtils.documentReady().then(initializeOnDomReady);
+  initLoadingSpinner();
 }
 
 Object.assign(globalThis, {
