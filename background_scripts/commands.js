@@ -485,7 +485,8 @@ const defaultKeyMappings = {
 
   // Misc
   "?": "showHelp",
-  "gs": "toggleViewSource",
+  "gs": "LinkHints.activateModeToFocusScrollable",
+  "gS": "toggleViewSource",
 };
 
 export {
