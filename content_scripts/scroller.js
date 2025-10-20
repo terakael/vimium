@@ -108,7 +108,19 @@ const doesScroll = function (element, direction, amount, factor) {
   // absolute scrolls, factor is always 1.
   let delta = (factor * getDimension(element, direction, amount)) || -1;
   delta = getSign(delta); // 1 or -1
-  return performScroll(element, direction, delta) && performScroll(element, direction, -delta);
+
+  // Try scrolling in both directions. If we can scroll in either direction and return to the
+  // original position, the element is scrollable.
+  const scrolledForward = performScroll(element, direction, delta);
+  const returnedFromForward = performScroll(element, direction, -delta);
+  if (scrolledForward && returnedFromForward) {
+    return true;
+  }
+
+  // If forward scroll failed, try backward scroll (element might be at the end already).
+  const scrolledBackward = performScroll(element, direction, -delta);
+  const returnedFromBackward = performScroll(element, direction, delta);
+  return scrolledBackward && returnedFromBackward;
 };
 
 const isScrollableElement = function (element, direction, amount, factor) {
@@ -409,12 +421,12 @@ const Scroller = {
   },
 
   // Is element scrollable and not the activated element?
-  isScrollableElement(element) {
+  isScrollableElement(element, direction, amount, factor) {
     if (!activatedElement) {
       activatedElement = (getScrollingElement() && firstScrollableElement()) ||
         getScrollingElement();
     }
-    return (element !== activatedElement) && isScrollableElement(element);
+    return (element !== activatedElement) && isScrollableElement(element, direction, amount, factor);
   },
 
   // Scroll the top, bottom, left and right of element into view. The is used by visual mode to
