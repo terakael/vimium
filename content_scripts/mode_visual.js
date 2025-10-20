@@ -472,6 +472,34 @@ VisualMode.prototype.movements = {
   "P"() {
     return chrome.runtime.sendMessage({ handler: "openUrlInNewTab", url: this.yank() });
   },
+  "gx"() {
+    const searchText = this.selection.toString();
+    let searchUrl = Settings.get("searchUrl");
+    // Inline implementation of UrlUtils.createSearchUrl
+    if (!["%s", "%S"].some((token) => searchUrl.indexOf(token) >= 0)) {
+      searchUrl += "%s";
+    }
+    searchUrl = searchUrl.replace(/%S/g, searchText);
+    const parts = searchText.split(/\s+/);
+    const encodedQuery = parts.map(encodeURIComponent).join("%20");
+    const url = searchUrl.replace(/%s/g, encodedQuery);
+    this.exit();
+    return chrome.runtime.sendMessage({ handler: "openUrlInCurrentTab", url });
+  },
+  "gX"() {
+    const searchText = this.selection.toString();
+    let searchUrl = Settings.get("searchUrl");
+    // Inline implementation of UrlUtils.createSearchUrl
+    if (!["%s", "%S"].some((token) => searchUrl.indexOf(token) >= 0)) {
+      searchUrl += "%s";
+    }
+    searchUrl = searchUrl.replace(/%S/g, searchText);
+    const parts = searchText.split(/\s+/);
+    const encodedQuery = parts.map(encodeURIComponent).join("%20");
+    const url = searchUrl.replace(/%s/g, encodedQuery);
+    this.exit();
+    return chrome.runtime.sendMessage({ handler: "openUrlInNewTab", url });
+  },
   "v"() {
     return new VisualMode().init();
   },
