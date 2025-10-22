@@ -355,6 +355,8 @@ const NormalModeCommands = {
   "LinkHints.activateModeToCopyLinkUrl": LinkHints.activateModeToCopyLinkUrl.bind(LinkHints),
   "LinkHints.activateModeToFocusScrollable": LinkHints.activateModeToFocusScrollable.bind(LinkHints),
 
+  "Scroller.yankAllInScrollable": Scroller.yankAllInScrollable.bind(Scroller),
+
   "Vomnibar.activate": Vomnibar.activate.bind(Vomnibar),
   "Vomnibar.activateInNewTab": Vomnibar.activateInNewTab.bind(Vomnibar),
   "Vomnibar.activateTabSelection": Vomnibar.activateTabSelection.bind(Vomnibar),

@@ -462,6 +462,49 @@ const Scroller = {
       }
     }
   },
+
+  // Get the currently activated scrollable element, or null if none is activated.
+  getActivatedElement() {
+    return activatedElement;
+  },
+
+  // Select all text within the given element and return the selected text.
+  // Returns null if the element is empty or has no text content.
+  selectAllTextInElement(element) {
+    const selection = window.getSelection();
+    const range = document.createRange();
+
+    try {
+      range.selectNodeContents(element);
+      selection.removeAllRanges();
+      selection.addRange(range);
+      return selection.toString();
+    } catch (error) {
+      console.log("Error selecting text in element:", error);
+      return null;
+    }
+  },
+
+  // Yank all text from the activated scrollable element (or entire page if none focused).
+  yankAllInScrollable() {
+    const element = activatedElement || document.body;
+    const text = this.selectAllTextInElement(element);
+
+    if (!text || text.length === 0) {
+      HUD.show("No text to yank", 1000);
+      return;
+    }
+
+    HUD.copyToClipboard(text);
+
+    // Clear the selection after copying.
+    window.getSelection().removeAllRanges();
+
+    // Show confirmation message.
+    const elementType = activatedElement ? "scrollable region" : "page";
+    const plural = text.length === 1 ? "" : "s";
+    HUD.show(`Yanked ${text.length} character${plural} from ${elementType}`, 2000);
+  },
 };
 
 const getSpecialScrollingElement = function () {
