@@ -237,6 +237,13 @@ const allCommands = [
   },
 
   {
+    name: "Scroller.yankAllInScrollable",
+    desc: "Yank all text from focused scrollable element (or entire page)",
+    group: "misc",
+    advanced: true,
+  },
+
+  {
     name: "goPrevious",
     desc: "Follow the link labeled previous or <",
     group: "navigation",

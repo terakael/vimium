@@ -491,6 +491,7 @@ const defaultKeyMappings = {
   "?": "showHelp",
   "gs": "LinkHints.activateModeToFocusScrollable",
   "gS": "toggleViewSource",
+  "yG": "Scroller.yankAllInScrollable",
 };
 
 export {
