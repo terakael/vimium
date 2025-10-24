@@ -70,6 +70,8 @@ class KeyHandlerMode extends Mode {
       // Some links stay "open" after clicking, until you mouse off of them, like Wikipedia's link
       // preview popups. If the user types escape, issue a mouseout event here. See #3073.
       HintCoordinator.mouseOutOfLastClickedElement();
+      // Clear any text selection when Escape is pressed in normal mode.
+      window.getSelection().removeAllRanges();
       return this.continueBubbling;
     } else if (this.isMappedKey(keyChar)) {
       this.handleKeyChar(keyChar);
