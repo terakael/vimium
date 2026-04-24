@@ -1,0 +1,27 @@
+{
+  "keyMappings": "# Insert your preferred key mappings here.\nunmap f\nmap s LinkHints.activateMode\n\nunmap F\nmap S LinkHints.activateModeToOpenInNewTab\n\nunmap <a-f>\nmap <a-s> LinkHints.activateModeWithQueue\n\nunmap J\nunmap K\nmap J nextTab\nmap K previousTab\n\nunmap <c-a>\nunmap <c-h>\nunmap <c-l>\nmap <c-h> previousTab\nmap <c-l> nextTab\n\nunmap d\nunmap u\nmap <c-d> scrollPageDown \nmap <c-u> scrollPageUp\n\nmap ZZ removeTab\n\nmap r reload hard",
+  "settingsVersion": "2.3",
+  "userDefinedLinkHintCss": "div > .vimiumHintMarker {\n/* linkhint boxes */\nbackground: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FFF785),\n  color-stop(100%,#FFC542));\nborder: 1px solid #E3BE23;\n}\n\ndiv > .vimiumHintMarker span {\n/* linkhint text */\ncolor: black;\nfont-weight: bold;\nfont-size: 16px;\n}\n\ndiv > .vimiumHintMarker > .matchingCharacter {\n}",
+  "exclusionRules": [
+    {
+      "passKeys": "",
+      "pattern": "https?://mail.google.com/*"
+    },
+    {
+      "passKeys": "yy",
+      "pattern": "https://confluence.rakuten-it.com/confluence/*"
+    },
+    {
+      "passKeys": "]],[[,[,],h,l",
+      "pattern": "https://git.rakuten-it.com/projects/*/repos/*/pull-requests/*/diff*"
+    },
+    {
+      "passKeys": "",
+      "pattern": "https?://dev.intur.nl/*"
+    },
+    {
+      "passKeys": "",
+      "pattern": "https?://leetcode.com/*"
+    }
+  ]
+}
