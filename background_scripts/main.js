@@ -179,6 +179,10 @@ async function selectSpecificTab(request) {
   await chrome.tabs.update(request.id, { active: true });
 }
 
+async function closeSpecificTab({ id }) {
+  await chrome.tabs.remove(id);
+}
+
 function moveTab({ count, tab, registryEntry }) {
   if (registryEntry.command === "moveTabLeft") {
     count = -count;
@@ -663,6 +667,7 @@ const sendRequestHandlers = {
 
   nextFrame: BackgroundCommands.nextFrame,
   selectSpecificTab,
+  closeSpecificTab,
   createMark: marks.create,
   gotoMark: marks.goto,
   // Send a message to all frames in the current tab. If request.frameId is provided, then send

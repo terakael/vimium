@@ -170,6 +170,11 @@ class VomnibarUI {
       (event.ctrlKey && ((key === "j") || (key === "n")))
     ) {
       return "down";
+    } else if (
+      event.ctrlKey && !event.altKey && !event.metaKey && (key === "d") &&
+      (this.completerName === "tabs")
+    ) {
+      return "close-tab";
     } else if (event.ctrlKey && (key === "enter")) {
       return "ctrl-enter";
     } else if (event.key === "Enter") {
@@ -223,6 +228,12 @@ class VomnibarUI {
         }
         this.input.value = this.completions[this.selection]?.url;
         this.input.scrollLeft = this.input.scrollWidth;
+      }
+    } else if ((action === "close-tab") && (this.selection >= 0)) {
+      const completion = this.completions[this.selection];
+      if (completion?.tabId != null) {
+        await chrome.runtime.sendMessage({ handler: "closeSpecificTab", id: completion.tabId });
+        await this.update();
       }
     } else if (action === "delete") {
       if (this.isUserSearchEngineActive() && (this.input.selectionEnd === 0)) {
